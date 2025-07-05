@@ -1,5 +1,6 @@
 package one.digitalinnovation.gof.controller;
 
+import one.digitalinnovation.gof.exceptions.ClienteFullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,13 +23,14 @@ import one.digitalinnovation.gof.service.ClienteService;
  * @author falvojr
  */
 @RestController
-@RequestMapping("clientes")
+@RequestMapping
 public class ClienteRestController {
+
 
 	@Autowired
 	private ClienteService clienteService;
 
-	@GetMapping
+	@GetMapping("/buscar/todos")
 	public ResponseEntity<Iterable<Cliente>> buscarTodos() {
 		return ResponseEntity.ok(clienteService.buscarTodos());
 	}
@@ -38,7 +40,7 @@ public class ClienteRestController {
 		return ResponseEntity.ok(clienteService.buscarPorId(id));
 	}
 
-	@PostMapping
+	@PostMapping("/{inserir}")
 	public ResponseEntity<Cliente> inserir(@RequestBody Cliente cliente) {
 		clienteService.inserir(cliente);
 		return ResponseEntity.ok(cliente);
@@ -46,7 +48,12 @@ public class ClienteRestController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-		clienteService.atualizar(id, cliente);
+		if(id !=null) {
+			clienteService.atualizar(id, cliente);
+			return ResponseEntity.ok(cliente);
+		}
+
+		clienteService.inserir(cliente);
 		return ResponseEntity.ok(cliente);
 	}
 

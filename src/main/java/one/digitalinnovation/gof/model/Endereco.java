@@ -27,6 +27,8 @@ public class Endereco {
 	private String ddd;
 	private String siafi;
 
+
+
 	public String getCep() {
 		return cep;
 	}

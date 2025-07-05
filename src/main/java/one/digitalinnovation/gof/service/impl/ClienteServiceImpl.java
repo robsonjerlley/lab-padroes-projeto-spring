@@ -2,6 +2,7 @@ package one.digitalinnovation.gof.service.impl;
 
 import java.util.Optional;
 
+import one.digitalinnovation.gof.exceptions.ClienteFullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import one.digitalinnovation.gof.service.ViaCepService;
  */
 @Service
 public class ClienteServiceImpl implements ClienteService {
+
 
 	// Singleton: Injetar os componentes do Spring com @Autowired.
 	@Autowired
@@ -42,13 +44,20 @@ public class ClienteServiceImpl implements ClienteService {
 	@Override
 	public Cliente buscarPorId(Long id) {
 		// Buscar Cliente por ID.
-		Optional<Cliente> cliente = clienteRepository.findById(id);
-		return cliente.get();
+		if(id != null) {
+			Optional<Cliente> cliente = clienteRepository.findById(id);
+			return cliente.get();
+		}
+
+		return null;
 	}
 
 	@Override
 	public void inserir(Cliente cliente) {
-		salvarClienteComCep(cliente);
+		if(cliente != null) {
+			salvarClienteComCep(cliente);
+		}
+
 	}
 
 	@Override
@@ -58,12 +67,17 @@ public class ClienteServiceImpl implements ClienteService {
 		if (clienteBd.isPresent()) {
 			salvarClienteComCep(cliente);
 		}
-	}
+
+        inserir(cliente);
+    }
 
 	@Override
 	public void deletar(Long id) {
 		// Deletar Cliente por ID.
-		clienteRepository.deleteById(id);
+		if(id != null) {
+			clienteRepository.deleteById(id);
+		}
+
 	}
 
 	private void salvarClienteComCep(Cliente cliente) {
